@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+/* eslint-disable newline-per-chained-call */
 import React from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
@@ -5,15 +7,19 @@ import { Formik } from 'formik';
 import {
   Box,
   Button,
-  Checkbox,
   Container,
-  FormHelperText,
   Link,
   TextField,
   Typography,
-  makeStyles
+  makeStyles,
+  Select,
+  InputLabel,
+  MenuItem
 } from '@material-ui/core';
 import Page from 'src/components/Page';
+
+const registerUrl = 'http://localhost:8005/api/admin/registration/';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,6 +27,9 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     paddingBottom: theme.spacing(3),
     paddingTop: theme.spacing(3)
+  },
+  select: {
+    minWidth: 120
   }
 }));
 
@@ -43,22 +52,44 @@ const RegisterView = () => {
           <Formik
             initialValues={{
               email: '',
-              firstName: '',
-              lastName: '',
-              password: '',
-              policy: false
+              username: '',
+              first_name: '',
+              last_name: '',
+              password1: '',
+              password2: '',
+              role: ''
             }}
             validationSchema={
               Yup.object().shape({
                 email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-                firstName: Yup.string().max(255).required('First name is required'),
-                lastName: Yup.string().max(255).required('Last name is required'),
-                password: Yup.string().max(255).required('password is required'),
-                policy: Yup.boolean().oneOf([true], 'This field must be checked')
+                first_name: Yup.string().max(255).required('First name is required'),
+                last_name: Yup.string().max(255).required('Last name is required'),
+                username: Yup.string().max(255).required('Username is required'),
+                password1: Yup.string().max(255).required('password is required'),
+                password2: Yup.string().max(255).required('password is required'),
+                role: Yup.string().required('Role is required')
               })
             }
-            onSubmit={() => {
-              navigate('/app/dashboard', { replace: true });
+            onSubmit={ async (values, errors) => {
+              const response = await fetch(registerUrl, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(values)
+              });
+              if (response.ok) {
+                navigate('/app/dashboard');
+              } else {
+                const res = await response.json();
+                console.log('Error while Registering', res);
+                errors.setFieldError('email', res.email[0]);
+                errors.setFieldError('password1', res.password1[0]);
+                errors.setFieldError('email', res.password2[0]);
+                navigate('/register', { replace: true });
+              }
+              // navigate('/app/dashboard', { replace: true });
             }}
           >
             {({
@@ -76,45 +107,57 @@ const RegisterView = () => {
                     color="textPrimary"
                     variant="h2"
                   >
-                    Create new account
+                    Add New User
                   </Typography>
                   <Typography
                     color="textSecondary"
                     gutterBottom
                     variant="body2"
                   >
-                    Use your email to create new account
+                    Use the user's email to create new account, remember the password and give to the user!
                   </Typography>
                 </Box>
                 <TextField
-                  error={Boolean(touched.firstName && errors.firstName)}
+                  error={Boolean(touched.first_name && errors.first_name)}
                   fullWidth
-                  helperText={touched.firstName && errors.firstName}
+                  helperText={touched.first_name && errors.first_name}
                   label="First name"
                   margin="normal"
-                  name="firstName"
+                  name="first_name"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.firstName}
+                  value={values.first_name}
                   variant="outlined"
                 />
                 <TextField
-                  error={Boolean(touched.lastName && errors.lastName)}
+                  error={Boolean(touched.last_name && errors.last_name)}
                   fullWidth
-                  helperText={touched.lastName && errors.lastName}
+                  helperText={touched.last_name && errors.last_name}
                   label="Last name"
                   margin="normal"
-                  name="lastName"
+                  name="last_name"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.lastName}
+                  value={values.last_name}
+                  variant="outlined"
+                />
+                <TextField
+                  error={Boolean(touched.username && errors.username)}
+                  fullWidth
+                  helperText={touched.username && errors.username}
+                  label="User Name"
+                  margin="normal"
+                  name="username"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.username}
                   variant="outlined"
                 />
                 <TextField
                   error={Boolean(touched.email && errors.email)}
                   fullWidth
                   helperText={touched.email && errors.email}
-                  label="Email Address"
+                  label="Email Address (@faculty.ie.edu)"
                   margin="normal"
                   name="email"
                   onBlur={handleBlur}
@@ -124,49 +167,51 @@ const RegisterView = () => {
                   variant="outlined"
                 />
                 <TextField
-                  error={Boolean(touched.password && errors.password)}
+                  error={Boolean(touched.password1 && errors.password1)}
                   fullWidth
-                  helperText={touched.password && errors.password}
+                  helperText={touched.password1 && errors.password1}
                   label="Password"
                   margin="normal"
-                  name="password"
+                  name="password1"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   type="password"
-                  value={values.password}
+                  value={values.password1}
                   variant="outlined"
                 />
-                <Box
-                  alignItems="center"
-                  display="flex"
-                  ml={-1}
+                <TextField
+                  error={Boolean(touched.password2 && errors.password2)}
+                  fullWidth
+                  helperText={touched.password2 && errors.password2}
+                  label="Repeat Password"
+                  margin="normal"
+                  name="password2"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  type="password"
+                  value={values.password2}
+                  variant="outlined"
+                />
+                <InputLabel id="userRole">Role</InputLabel>
+                <Select
+                  className={classes.select}
+                  id="role"
+                  labelId="userRole"
+                  name="role"
+                  value={values.role}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                 >
-                  <Checkbox
-                    checked={values.policy}
-                    name="policy"
-                    onChange={handleChange}
-                  />
-                  <Typography
-                    color="textSecondary"
-                    variant="body1"
-                  >
-                    I have read the
-                    {' '}
-                    <Link
-                      color="primary"
-                      component={RouterLink}
-                      to="#"
-                      underline="always"
-                      variant="h6"
-                    >
-                      Terms and Conditions
-                    </Link>
-                  </Typography>
-                </Box>
-                {Boolean(touched.policy && errors.policy) && (
-                  <FormHelperText error>
-                    {errors.policy}
-                  </FormHelperText>
+                  <MenuItem value={1}>Super User</MenuItem>
+                  <MenuItem value={2}>Manager</MenuItem>
+                  <MenuItem value={3}>Employee</MenuItem>
+                </Select>
+                {errors.color
+                && touched.color
+                && (
+                <div className="input-feedback">
+                  {errors.color}
+                </div>
                 )}
                 <Box my={2}>
                   <Button
@@ -180,20 +225,6 @@ const RegisterView = () => {
                     Sign up now
                   </Button>
                 </Box>
-                <Typography
-                  color="textSecondary"
-                  variant="body1"
-                >
-                  Have an account?
-                  {' '}
-                  <Link
-                    component={RouterLink}
-                    to="/login"
-                    variant="h6"
-                  >
-                    Sign in
-                  </Link>
-                </Typography>
               </form>
             )}
           </Formik>

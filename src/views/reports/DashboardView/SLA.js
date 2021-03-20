@@ -1,4 +1,5 @@
-import React, { Fragment } from 'react';
+/* eslint-disable no-unused-vars */
+import React from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Bar } from 'react-chartjs-2';
@@ -15,55 +16,89 @@ import {
 } from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { useAPI } from './api';
 
-const availabilityUrl = 'http://localhost:8005/api/kpi/availability/2018/01/';
+const slaUrl = 'http://localhost:8005/api/kpi/sla/2018/01/';
 
 const useStyles = makeStyles(() => ({
   root: {}
 }));
 
-const Sales = ({ className, ...rest }) => {
+const SLA = ({ className, ...rest }) => {
   const classes = useStyles();
   const theme = useTheme();
-  const { loading, incidents } = useAPI(availabilityUrl);
-  // console.log(incidents);
+  const { loading, incidents } = useAPI(slaUrl);
+  console.log(incidents);
   const keys = Object.keys(incidents);
-  const availability = keys.map((key) => {
-    return incidents[key].availability;
+  const inSla = keys.map((key) => {
+    return incidents[key].in_sla;
   });
-  const unavailability = keys.map((key) => {
-    return incidents[key].total_unavailable_time / 3600;
+
+  const outSla = keys.map((key) => {
+    return incidents[key].out_sla;
+  });
+
+  const percentages = keys.map((key) => {
+    const inPercentage = (incidents[key].in_sla
+        / (incidents[key].in_sla + incidents[key].out_sla))
+      * 100;
+    const outPercentage = 100 - inPercentage;
+    return inPercentage;
   });
 
   const data = {
     datasets: [
       {
-        type: 'bar',
-        backgroundColor: colors.indigo[500],
-        data: availability,
-        label: 'Availability(%)'
-      },
-      {
-        type: 'line',
-        // backgroundColor: colors.red[100],
-        borderColor: colors.red[500],
         fill: false,
+        borderColor: colors.blue[500],
+        pointRadius: 4,
+        data: [percentages[0], 100, 100, 100],
         pointBorderColor: 'white',
         pointBackgroundColor: 'black',
         pointBorderWidth: 1,
         pointHoverRadius: 8,
+        label: 'This month'
+      },
+      {
+        fill: false,
+        borderColor: colors.green[500],
         pointRadius: 4,
-        data: unavailability,
-        label: 'Unavailable Time(hrs)'
+        data: [percentages[1], 100, 100, 100],
+        pointBorderColor: 'white',
+        pointBackgroundColor: 'black',
+        pointBorderWidth: 1,
+        pointHoverRadius: 8,
+        label: 'This month'
+      },
+      {
+        fill: false,
+        borderColor: colors.yellow[500],
+        pointRadius: 4,
+        data: [percentages[2], 100, 100, 100],
+        pointBorderColor: 'white',
+        pointBackgroundColor: 'black',
+        pointBorderWidth: 1,
+        pointHoverRadius: 8,
+        label: 'This month'
+      },
+      {
+        fill: false,
+        borderColor: colors.red[500],
+        pointRadius: 4,
+        data: [percentages[3], 100, 100, 100],
+        pointBorderColor: 'white',
+        pointBackgroundColor: 'black',
+        pointBorderWidth: 1,
+        pointHoverRadius: 8,
+        label: 'This month'
       }
     ],
-    labels: keys
+    labels: ['Jan', 'Feb', 'Mar', 'Apr']
   };
 
   const options = {
+    type: 'line',
     animation: false,
     cornerRadius: 20,
     layout: { padding: 0 },
@@ -117,31 +152,6 @@ const Sales = ({ className, ...rest }) => {
       titleFontColor: theme.palette.text.primary
     }
   };
-  let chart = null;
-  if (loading) {
-    chart = <CircularProgress />;
-  } else {
-    chart = (
-      <>
-        <CardContent>
-          <Box height={400} position="relative">
-            <Bar data={data} options={options} />
-          </Box>
-        </CardContent>
-        <Divider />
-        <Box display="flex" justifyContent="flex-end" p={2}>
-          <Button
-            color="primary"
-            endIcon={<ArrowRightIcon />}
-            size="small"
-            variant="text"
-          >
-            Overview
-          </Button>
-        </Box>
-      </>
-    );
-  }
 
   return (
     <Card className={clsx(classes.root, className)} {...rest}>
@@ -154,13 +164,28 @@ const Sales = ({ className, ...rest }) => {
         title="Latest Sales"
       />
       <Divider />
-      {chart}
+      <CardContent>
+        <Box height={400} position="relative">
+          <Bar data={data} options={options} />
+        </Box>
+      </CardContent>
+      <Divider />
+      <Box display="flex" justifyContent="flex-end" p={2}>
+        <Button
+          color="primary"
+          endIcon={<ArrowRightIcon />}
+          size="small"
+          variant="text"
+        >
+          Overview
+        </Button>
+      </Box>
     </Card>
   );
 };
 
-Sales.propTypes = {
+SLA.propTypes = {
   className: PropTypes.string
 };
 
-export default Sales;
+export default SLA;

@@ -5,8 +5,7 @@ import {
   makeStyles
 } from '@material-ui/core';
 import Page from 'src/components/Page';
-import Profile from './Profile';
-import ProfileDetails from './ProfileDetails';
+import UploadView from './Upload';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,13 +16,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Account = () => {
+const UploadFile = () => {
   const classes = useStyles();
 
   return (
     <Page
       className={classes.root}
-      title="Account"
+      title="Upload File"
     >
       <Container maxWidth="lg">
         <Grid
@@ -36,7 +35,7 @@ const Account = () => {
             md={6}
             xs={12}
           >
-            <ProfileDetails />
+            <UploadView />
           </Grid>
         </Grid>
       </Container>
@@ -44,4 +43,4 @@ const Account = () => {
   );
 };
 
-export default Account;
+export default UploadFile;

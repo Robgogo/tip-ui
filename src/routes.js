@@ -10,6 +10,7 @@ import NotFoundView from 'src/views/errors/NotFoundView';
 import ProductListView from 'src/views/product/ProductListView';
 import RegisterView from 'src/views/auth/RegisterView';
 import SettingsView from 'src/views/settings/SettingsView';
+import UploadView from 'src/views/UploadView';
 
 const routes = [
   {
@@ -17,6 +18,7 @@ const routes = [
     element: <DashboardLayout />,
     children: [
       { path: 'account', element: <AccountView /> },
+      { path: 'upload', element: <UploadView /> },
       { path: 'customers', element: <CustomerListView /> },
       { path: 'dashboard', element: <DashboardView /> },
       { path: 'products', element: <ProductListView /> },

@@ -13,6 +13,11 @@ import {
 } from '@material-ui/core';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import MoneyIcon from '@material-ui/icons/Money';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+import { useAPI } from './api';
+
+const numIncidentsUrl = 'http://localhost:8005/api/kpi/num_incident/2018/01/';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,33 +37,27 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Budget = ({ className, ...rest }) => {
+const Critical = ({ className, ...rest }) => {
   const classes = useStyles();
+  const { loading, incidents } = useAPI(numIncidentsUrl);
+  // console.log(incidents);
+  let critical = '';
+  if (loading === false) {
+    critical = incidents.critical;
+  } else {
+    critical = <CircularProgress />;
+  }
 
   return (
-    <Card
-      className={clsx(classes.root, className)}
-      {...rest}
-    >
+    <Card className={clsx(classes.root, className)} {...rest}>
       <CardContent>
-        <Grid
-          container
-          justify="space-between"
-          spacing={3}
-        >
+        <Grid container justify="space-between" spacing={3}>
           <Grid item>
-            <Typography
-              color="textSecondary"
-              gutterBottom
-              variant="h6"
-            >
-              BUDGET
+            <Typography color="textSecondary" gutterBottom variant="h6">
+              CRITICAL INCIDENTS RAISED
             </Typography>
-            <Typography
-              color="textPrimary"
-              variant="h3"
-            >
-              $24,000
+            <Typography color="textPrimary" variant="h3">
+              {critical}
             </Typography>
           </Grid>
           <Grid item>
@@ -67,22 +66,12 @@ const Budget = ({ className, ...rest }) => {
             </Avatar>
           </Grid>
         </Grid>
-        <Box
-          mt={2}
-          display="flex"
-          alignItems="center"
-        >
+        <Box mt={2} display="flex" alignItems="center">
           <ArrowDownwardIcon className={classes.differenceIcon} />
-          <Typography
-            className={classes.differenceValue}
-            variant="body2"
-          >
+          <Typography className={classes.differenceValue} variant="body2">
             12%
           </Typography>
-          <Typography
-            color="textSecondary"
-            variant="caption"
-          >
+          <Typography color="textSecondary" variant="caption">
             Since last month
           </Typography>
         </Box>
@@ -91,8 +80,8 @@ const Budget = ({ className, ...rest }) => {
   );
 };
 
-Budget.propTypes = {
+Critical.propTypes = {
   className: PropTypes.string
 };
 
-export default Budget;
+export default Critical;

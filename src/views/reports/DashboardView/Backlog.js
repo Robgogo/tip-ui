@@ -13,6 +13,11 @@ import {
 } from '@material-ui/core';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import PeopleIcon from '@material-ui/icons/PeopleOutlined';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+import { useAPI } from './api';
+
+const numIncidentsUrl = 'http://localhost:8005/api/kpi/num_incident/2018/01/';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,7 +39,14 @@ const useStyles = makeStyles((theme) => ({
 
 const TotalCustomers = ({ className, ...rest }) => {
   const classes = useStyles();
-
+  const { loading, incidents } = useAPI(numIncidentsUrl);
+  // console.log(incidents);
+  let backlog = '';
+  if (loading === false) {
+    backlog = incidents.backlog;
+  } else {
+    backlog = <CircularProgress />;
+  }
   return (
     <Card
       className={clsx(classes.root, className)}
@@ -52,13 +64,13 @@ const TotalCustomers = ({ className, ...rest }) => {
               gutterBottom
               variant="h6"
             >
-              TOTAL CUSTOMERS
+              Backlog Incidents
             </Typography>
             <Typography
               color="textPrimary"
               variant="h3"
             >
-              1,600
+              {backlog}
             </Typography>
           </Grid>
           <Grid item>

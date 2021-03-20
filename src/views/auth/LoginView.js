@@ -16,6 +16,8 @@ import FacebookIcon from 'src/icons/Facebook';
 import GoogleIcon from 'src/icons/Google';
 import Page from 'src/components/Page';
 
+const loginUrl = 'http://localhost:8005/api/admin/login/';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.dark,
@@ -43,15 +45,31 @@ const LoginView = () => {
         <Container maxWidth="sm">
           <Formik
             initialValues={{
-              email: 'demo@devias.io',
-              password: 'Password123'
+              email: 'email@faculty.ie.edu',
+              password: 'password'
             }}
             validationSchema={Yup.object().shape({
               email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
               password: Yup.string().max(255).required('Password is required')
             })}
-            onSubmit={() => {
-              navigate('/app/dashboard', { replace: true });
+            onSubmit={async (values) => {
+              const response = await fetch(loginUrl, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(values)
+              });
+              if (!response.ok) {
+                navigate('/login');
+              } else {
+                const res = await response.json();
+                console.log(res);
+                sessionStorage.setItem('Token', res.key);
+
+                navigate('/app/dashboard', { replace: true });
+              }
             }}
           >
             {({

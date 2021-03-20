@@ -42,7 +42,7 @@ const NotFoundView = () => {
             color="textPrimary"
             variant="h1"
           >
-            404: The page you are looking for isn’t here
+            400 : You need to login or have appropriate permissions to look at this resource!
           </Typography>
           <Typography
             align="center"
@@ -56,7 +56,7 @@ const NotFoundView = () => {
             <img
               alt="Under development"
               className={classes.image}
-              src="/static/images/undraw_page_not_found_su7k.svg"
+              src="/static/images/not_found.png"
             />
           </Box>
         </Container>

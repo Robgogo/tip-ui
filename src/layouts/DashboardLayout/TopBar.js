@@ -1,26 +1,34 @@
-import React, { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import React from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import {
   AppBar,
-  Badge,
   Box,
   Hidden,
   IconButton,
   Toolbar,
-  makeStyles
+  makeStyles,
+  colors
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
 import InputIcon from '@material-ui/icons/Input';
 import Logo from 'src/components/Logo';
+import Cookies from 'js-cookie';
 
 const useStyles = makeStyles(() => ({
-  root: {},
+  root: {
+    backgroundColor: colors.red[1000]
+  },
   avatar: {
     width: 60,
     height: 60
+  },
+  iberia: {
+    backgroundColor: '#d71529'
+  },
+  login: {
+    color: '#FFF'
   }
 }));
 
@@ -30,7 +38,18 @@ const TopBar = ({
   ...rest
 }) => {
   const classes = useStyles();
-  const [notifications] = useState([]);
+  const navigate = useNavigate();
+
+  let login = null;
+  if (!sessionStorage.getItem('Token')) {
+    login = (
+      <RouterLink to="/login">
+        <IconButton className={classes.login}>
+          Login
+        </IconButton>
+      </RouterLink>
+    );
+  }
 
   return (
     <AppBar
@@ -38,22 +57,41 @@ const TopBar = ({
       elevation={0}
       {...rest}
     >
-      <Toolbar>
+      <Toolbar className={classes.iberia}>
         <RouterLink to="/">
           <Logo />
         </RouterLink>
         <Box flexGrow={1} />
         <Hidden mdDown>
-          <IconButton color="inherit">
-            <Badge
-              badgeContent={notifications.length}
-              color="primary"
-              variant="dot"
-            >
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-          <IconButton color="inherit">
+          {login}
+          <IconButton
+            onClick={async () => {
+              const logOutUrl = 'http://localhost:8005/api/admin/logout/';
+              const token = sessionStorage.getItem('Token');
+              const csrf = Cookies.get('csrftoken');
+              console.log(csrf);
+              const response = await fetch(`${logOutUrl}${token}/`, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': csrf,
+                },
+                body: JSON.stringify({ key: token })
+              });
+              console.log('Got here');
+              if (response.ok) {
+                // const res = response.json();
+                console.log('Removing');
+                Cookies.remove('csrftoken');
+                sessionStorage.removeItem('Token');
+                navigate('/login');
+              } else {
+                console.log('Failed');
+              }
+            }}
+            color="inherit"
+          >
             <InputIcon />
           </IconButton>
         </Hidden>

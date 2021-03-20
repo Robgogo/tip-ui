@@ -11,6 +11,11 @@ import {
   colors
 } from '@material-ui/core';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+import { useAPI } from './api';
+
+const numIncidentsUrl = 'http://localhost:8005/api/kpi/num_incident/2018/01/';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -23,33 +28,27 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const TotalProfit = ({ className, ...rest }) => {
+const Low = ({ className, ...rest }) => {
   const classes = useStyles();
+  const { loading, incidents } = useAPI(numIncidentsUrl);
+  // console.log(incidents);
+  let low = '';
+  if (loading === false) {
+    low = incidents.low;
+  } else {
+    low = <CircularProgress />;
+  }
 
   return (
-    <Card
-      className={clsx(classes.root, className)}
-      {...rest}
-    >
+    <Card className={clsx(classes.root, className)} {...rest}>
       <CardContent>
-        <Grid
-          container
-          justify="space-between"
-          spacing={3}
-        >
+        <Grid container justify="space-between" spacing={3}>
           <Grid item>
-            <Typography
-              color="textSecondary"
-              gutterBottom
-              variant="h6"
-            >
-              TOTAL PROFIT
+            <Typography color="textSecondary" gutterBottom variant="h6">
+              Low Priority Raised
             </Typography>
-            <Typography
-              color="textPrimary"
-              variant="h3"
-            >
-              $23,200
+            <Typography color="textPrimary" variant="h3">
+              {low}
             </Typography>
           </Grid>
           <Grid item>
@@ -63,8 +62,8 @@ const TotalProfit = ({ className, ...rest }) => {
   );
 };
 
-TotalProfit.propTypes = {
+Low.propTypes = {
   className: PropTypes.string
 };
 
-export default TotalProfit;
+export default Low;

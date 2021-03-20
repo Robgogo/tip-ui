@@ -12,6 +12,7 @@ import {
   TextField,
   makeStyles
 } from '@material-ui/core';
+import { useAPI } from '../../../layouts/DashboardLayout/NavBar/UserAPI';
 
 const states = [
   {
@@ -27,6 +28,7 @@ const states = [
     label: 'San Francisco'
   }
 ];
+const infoUrl = 'http://localhost:8005/api/admin/user/myinfo/';
 
 const useStyles = makeStyles(() => ({
   root: {}
@@ -34,21 +36,31 @@ const useStyles = makeStyles(() => ({
 
 const ProfileDetails = ({ className, ...rest }) => {
   const classes = useStyles();
-  const [values, setValues] = useState({
-    firstName: 'Katarina',
-    lastName: 'Smith',
-    email: 'demo@devias.io',
-    phone: '',
-    state: 'Alabama',
-    country: 'USA'
-  });
 
-  const handleChange = (event) => {
-    setValues({
-      ...values,
-      [event.target.name]: event.target.value
-    });
-  };
+  const { loading, user } = useAPI(infoUrl);
+  let role = '';
+  if (user.role === 1) {
+    role = 'Super User';
+  } else if (user.role === 2) {
+    role = 'Manager';
+  } else {
+    role = 'Employee';
+  }
+  // const [user, setValues] = useState({
+  //   firstName: 'Katarina',
+  //   lastName: 'Smith',
+  //   email: 'demo@devias.io',
+  //   phone: '',
+  //   state: 'Alabama',
+  //   country: 'USA'
+  // });
+
+  // const handleChange = (event) => {
+  //   setValues({
+  //     ...values,
+  //     [event.target.name]: event.target.value
+  //   });
+  // };
 
   return (
     <form
@@ -59,7 +71,7 @@ const ProfileDetails = ({ className, ...rest }) => {
     >
       <Card>
         <CardHeader
-          subheader="The information can be edited"
+          subheader="The information can not be edited"
           title="Profile"
         />
         <Divider />
@@ -75,12 +87,11 @@ const ProfileDetails = ({ className, ...rest }) => {
             >
               <TextField
                 fullWidth
-                helperText="Please specify the first name"
-                label="First name"
-                name="firstName"
-                onChange={handleChange}
+                disabled
+                // label="First name"
+                name="first_name"
                 required
-                value={values.firstName}
+                value={user.first_name}
                 variant="outlined"
               />
             </Grid>
@@ -91,11 +102,11 @@ const ProfileDetails = ({ className, ...rest }) => {
             >
               <TextField
                 fullWidth
-                label="Last name"
-                name="lastName"
-                onChange={handleChange}
+                disabled
+                // label="Last name"
+                name="last_name"
                 required
-                value={values.lastName}
+                value={user.last_name}
                 variant="outlined"
               />
             </Grid>
@@ -106,11 +117,11 @@ const ProfileDetails = ({ className, ...rest }) => {
             >
               <TextField
                 fullWidth
-                label="Email Address"
+                disabled
+                // label="Role"
                 name="email"
-                onChange={handleChange}
                 required
-                value={values.email}
+                value={user.email}
                 variant="outlined"
               />
             </Grid>
@@ -121,70 +132,17 @@ const ProfileDetails = ({ className, ...rest }) => {
             >
               <TextField
                 fullWidth
-                label="Phone Number"
-                name="phone"
-                onChange={handleChange}
-                type="number"
-                value={values.phone}
+                disabled
+                // label="Email Address"
+                name="email"
+                required
+                value={role}
                 variant="outlined"
               />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Country"
-                name="country"
-                onChange={handleChange}
-                required
-                value={values.country}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Select State"
-                name="state"
-                onChange={handleChange}
-                required
-                select
-                SelectProps={{ native: true }}
-                value={values.state}
-                variant="outlined"
-              >
-                {states.map((option) => (
-                  <option
-                    key={option.value}
-                    value={option.value}
-                  >
-                    {option.label}
-                  </option>
-                ))}
-              </TextField>
             </Grid>
           </Grid>
         </CardContent>
         <Divider />
-        <Box
-          display="flex"
-          justifyContent="flex-end"
-          p={2}
-        >
-          <Button
-            color="primary"
-            variant="contained"
-          >
-            Save details
-          </Button>
-        </Box>
       </Card>
     </form>
   );
