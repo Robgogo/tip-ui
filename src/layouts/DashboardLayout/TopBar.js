@@ -16,6 +16,15 @@ import InputIcon from '@material-ui/icons/Input';
 import Logo from 'src/components/Logo';
 import Cookies from 'js-cookie';
 
+import { dev, prod } from '../../Endpoints';
+
+let logoutURL = '';
+if (process.env.NODE_ENV === 'development') {
+  logoutURL = `${dev.baseURL}${dev.logout}`;
+} else if (process.env.NODE_ENV === 'production') {
+  logoutURL = `${prod.baseURL}${prod.logout}`;
+}
+
 const useStyles = makeStyles(() => ({
   root: {
     backgroundColor: colors.red[1000]
@@ -25,7 +34,7 @@ const useStyles = makeStyles(() => ({
     height: 60
   },
   iberia: {
-    backgroundColor: '#d71529'
+    backgroundColor: '#e80028'
   },
   login: {
     color: '#FFF'
@@ -66,11 +75,10 @@ const TopBar = ({
           {login}
           <IconButton
             onClick={async () => {
-              const logOutUrl = 'http://localhost:8005/api/admin/logout/';
               const token = sessionStorage.getItem('Token');
               const csrf = Cookies.get('csrftoken');
               console.log(csrf);
-              const response = await fetch(`${logOutUrl}${token}/`, {
+              const response = await fetch(`${logoutURL}${token}/`, {
                 method: 'POST',
                 mode: 'cors',
                 headers: {

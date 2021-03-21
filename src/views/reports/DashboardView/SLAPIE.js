@@ -19,8 +19,14 @@ import TabletIcon from '@material-ui/icons/Tablet';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { useAPI } from './api';
+import { dev, prod } from '../../../Endpoints';
 
-const slaUrl = 'http://localhost:8005/api/kpi/sla/2018/01/';
+let slaUrl = '';
+if (process.env.NODE_ENV === 'development') {
+  slaUrl = `${dev.baseURL}${dev.sla}2018/`;
+} else if (process.env.NODE_ENV === 'production') {
+  slaUrl = `${prod.baseURL}${prod.sla}2018/`;
+}
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -32,9 +38,9 @@ const TrafficByDevice = ({ className, ...rest }) => {
   const classes = useStyles();
   const theme = useTheme();
 
-  const { loading, incidents } = useAPI(slaUrl);
-  // console.log(incidents);
+  const { loading, incidents } = useAPI(`${slaUrl}${rest.month}/`);
   const keys = Object.keys(incidents);
+  // console.log(incidents);
   // const inSla = keys.map(key => {
   //   return incidents[key].in_sla;
   // });
@@ -44,11 +50,14 @@ const TrafficByDevice = ({ className, ...rest }) => {
   // });
 
   const percentages = keys.map((key) => {
-    let inPercentage = (incidents[key].in_sla / (incidents[key].in_sla + incidents[key].out_sla)) * 100;
-    inPercentage = Number(inPercentage).toFixed(2);
-    let outPercentage = 100 - inPercentage;
-    outPercentage = Number(outPercentage).toFixed(2);
-    return [inPercentage, outPercentage];
+    if (incidents[key].in_sla > 0 && incidents[key].out_sla > 0) {
+      let inPercentage = (incidents[key].in_sla / (incidents[key].in_sla + incidents[key].out_sla)) * 100;
+      inPercentage = Number(inPercentage).toFixed(2);
+      let outPercentage = 100 - inPercentage;
+      outPercentage = Number(outPercentage).toFixed(2);
+      return [inPercentage, outPercentage];
+    }
+    return [0, 0];
   });
   const percentagesCritical = percentages[3];
   const percentagesHigh = percentages[2];

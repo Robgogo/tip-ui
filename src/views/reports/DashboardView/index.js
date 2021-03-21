@@ -5,15 +5,9 @@ import {
   Select,
   InputLabel,
   MenuItem,
-  Box,
-  Button,
   makeStyles
 } from '@material-ui/core';
 import Page from 'src/components/Page';
-import * as Yup from 'yup';
-import { Formik } from 'formik';
-import LatestOrders from './LatestOrders';
-import LatestProducts from './LatestProducts';
 import Sales from './Sales';
 // import SLA from './SLA';
 import SLAPIE from './SLAPIE';
@@ -21,10 +15,17 @@ import IncidentNumber from './IncidentNumbers';
 import NotFoundView from '../../errors/NotFoundView';
 import { useAPI } from '../../../layouts/DashboardLayout/NavBar/UserAPI';
 import { useAPI as useAPIIncident } from './api';
-import YearMonthPicker from './MonthPicker';
+import { dev, prod } from '../../../Endpoints';
 
-const infoUrl = 'http://localhost:8005/api/admin/user/myinfo/';
-const numIncidentsUrl = 'http://localhost:8005/api/kpi/num_incident/2018/';
+let infoUrl = '';
+let numIncidentsUrl = '';
+if (process.env.NODE_ENV === 'development') {
+  infoUrl = `${dev.baseURL}${dev.userInfo}`;
+  numIncidentsUrl = `${dev.baseURL}${dev.numIncident}2018/`;
+} else if (process.env.NODE_ENV === 'production') {
+  infoUrl = `${prod.baseURL}${prod.userInfo}`;
+  numIncidentsUrl = `${prod.baseURL}${prod.numIncident}2018/`;
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,10 +45,8 @@ const Dashboard = () => {
   const [month, setMonth] = useState(1);
 
   const handleMonthChange = (e) => {
-    console.log("Target", e.target.value);
     setMonth(e.target.value);
   };
-  console.log(`${numIncidentsUrl}${month}/`);
   const { loading, incidents } = useAPIIncident(`${numIncidentsUrl}${month}/`);
   const loggedIN = sessionStorage.getItem('Token');
   const hasPermission = user.role !== 3;
@@ -94,7 +93,7 @@ const Dashboard = () => {
             xl={3}
             xs={12}
           >
-            <IncidentNumber priority="critical" loading={loading} incident={incidents.critical} />
+            <IncidentNumber priority="critical" loading={loading.toString()} incident={incidents.critical} />
           </Grid>
           <Grid
             item
@@ -103,7 +102,7 @@ const Dashboard = () => {
             xl={3}
             xs={12}
           >
-            <IncidentNumber priority="high" loading={loading} incident={incidents.high} />
+            <IncidentNumber priority="high" loading={loading.toString()} incident={incidents.high} />
           </Grid>
           <Grid
             item
@@ -112,7 +111,7 @@ const Dashboard = () => {
             xl={3}
             xs={12}
           >
-            <IncidentNumber priority="medium" loading={loading} incident={incidents.medium} />
+            <IncidentNumber priority="medium" loading={loading.toString()} incident={incidents.medium} />
           </Grid>
           <Grid
             item
@@ -121,7 +120,7 @@ const Dashboard = () => {
             xl={3}
             xs={12}
           >
-            <IncidentNumber priority="low" loading={loading} incident={incidents.low} />
+            <IncidentNumber priority="low" loading={loading.toString()} incident={incidents.low} />
           </Grid>
           <Grid
             item
@@ -130,7 +129,7 @@ const Dashboard = () => {
             xl={3}
             xs={12}
           >
-            <IncidentNumber priority="backlog" loading={loading} incident={incidents.backlog} />
+            <IncidentNumber priority="backlog" loading={loading.toString()} incident={incidents.backlog} />
           </Grid>
           <Grid
             item
@@ -139,7 +138,7 @@ const Dashboard = () => {
             xl={3}
             xs={12}
           >
-            <Sales />
+            <Sales month={month} />
           </Grid>
           <Grid
             item
@@ -148,7 +147,7 @@ const Dashboard = () => {
             xl={3}
             xs={12}
           >
-            <SLAPIE priority="critical" />
+            <SLAPIE priority="critical" month={month} />
           </Grid>
           <Grid
             item
@@ -157,7 +156,7 @@ const Dashboard = () => {
             xl={3}
             xs={12}
           >
-            <SLAPIE priority="high" />
+            <SLAPIE priority="high" month={month} />
           </Grid>
           <Grid
             item
@@ -166,7 +165,7 @@ const Dashboard = () => {
             xl={3}
             xs={12}
           >
-            <SLAPIE priority="medium" />
+            <SLAPIE priority="medium" month={month} />
           </Grid>
           <Grid
             item
@@ -175,7 +174,7 @@ const Dashboard = () => {
             xl={3}
             xs={12}
           >
-            <SLAPIE priority="low" />
+            <SLAPIE priority="low" month={month} />
           </Grid>
           {/* <Grid
             item

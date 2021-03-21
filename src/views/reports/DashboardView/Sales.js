@@ -18,8 +18,14 @@ import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { useAPI } from './api';
+import { dev, prod } from '../../../Endpoints';
 
-const availabilityUrl = 'http://localhost:8005/api/kpi/availability/2018/01/';
+let availabilityUrl = '';
+if (process.env.NODE_ENV === 'development') {
+  availabilityUrl = `${dev.baseURL}${dev.availability}2018/`;
+} else if (process.env.NODE_ENV === 'production') {
+  availabilityUrl = `${prod.baseURL}${prod.availability}2018/`;
+}
 
 const useStyles = makeStyles(() => ({
   root: {}
@@ -28,7 +34,7 @@ const useStyles = makeStyles(() => ({
 const Sales = ({ className, ...rest }) => {
   const classes = useStyles();
   const theme = useTheme();
-  const { loading, incidents } = useAPI(availabilityUrl);
+  const { loading, incidents } = useAPI(`${availabilityUrl}${rest.month}/`);
   // console.log(incidents);
   const keys = Object.keys(incidents);
   const availability = keys.map((key) => {

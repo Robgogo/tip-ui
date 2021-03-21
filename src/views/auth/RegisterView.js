@@ -1,14 +1,14 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable max-len */
 /* eslint-disable newline-per-chained-call */
 import React from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import {
   Box,
   Button,
   Container,
-  Link,
   TextField,
   Typography,
   makeStyles,
@@ -17,9 +17,14 @@ import {
   MenuItem
 } from '@material-ui/core';
 import Page from 'src/components/Page';
+import { dev, prod } from '../../Endpoints';
 
-const registerUrl = 'http://localhost:8005/api/admin/registration/';
-
+let registerUrl = '';
+if (process.env.NODE_ENV === 'development') {
+  registerUrl = `${dev.baseURL}${dev.register}`;
+} else if (process.env.NODE_ENV === 'production') {
+  registerUrl = `${prod.baseURL}${prod.register}`;
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -70,7 +75,7 @@ const RegisterView = () => {
                 role: Yup.string().required('Role is required')
               })
             }
-            onSubmit={ async (values, errors) => {
+            onSubmit={async (values, errors) => {
               const response = await fetch(registerUrl, {
                 method: 'POST',
                 mode: 'cors',

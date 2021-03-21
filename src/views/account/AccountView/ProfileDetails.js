@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import {
-  Box,
-  Button,
   Card,
   CardContent,
   CardHeader,
@@ -13,22 +11,14 @@ import {
   makeStyles
 } from '@material-ui/core';
 import { useAPI } from '../../../layouts/DashboardLayout/NavBar/UserAPI';
+import { dev, prod } from '../../../Endpoints';
 
-const states = [
-  {
-    value: 'alabama',
-    label: 'Alabama'
-  },
-  {
-    value: 'new-york',
-    label: 'New York'
-  },
-  {
-    value: 'san-francisco',
-    label: 'San Francisco'
-  }
-];
-const infoUrl = 'http://localhost:8005/api/admin/user/myinfo/';
+let infoUrl = '';
+if (process.env.NODE_ENV === 'development') {
+  infoUrl = `${dev.baseURL}${dev.userInfo}`;
+} else if (process.env.NODE_ENV === 'production') {
+  infoUrl = `${prod.baseURL}${prod.userInfo}`;
+}
 
 const useStyles = makeStyles(() => ({
   root: {}
@@ -37,7 +27,7 @@ const useStyles = makeStyles(() => ({
 const ProfileDetails = ({ className, ...rest }) => {
   const classes = useStyles();
 
-  const { loading, user } = useAPI(infoUrl);
+  const { user } = useAPI(infoUrl);
   let role = '';
   if (user.role === 1) {
     role = 'Super User';
@@ -46,21 +36,6 @@ const ProfileDetails = ({ className, ...rest }) => {
   } else {
     role = 'Employee';
   }
-  // const [user, setValues] = useState({
-  //   firstName: 'Katarina',
-  //   lastName: 'Smith',
-  //   email: 'demo@devias.io',
-  //   phone: '',
-  //   state: 'Alabama',
-  //   country: 'USA'
-  // });
-
-  // const handleChange = (event) => {
-  //   setValues({
-  //     ...values,
-  //     [event.target.name]: event.target.value
-  //   });
-  // };
 
   return (
     <form
@@ -91,7 +66,7 @@ const ProfileDetails = ({ className, ...rest }) => {
                 // label="First name"
                 name="first_name"
                 required
-                value={user.first_name}
+                value={user.first_name || ''}
                 variant="outlined"
               />
             </Grid>
@@ -106,7 +81,7 @@ const ProfileDetails = ({ className, ...rest }) => {
                 // label="Last name"
                 name="last_name"
                 required
-                value={user.last_name}
+                value={user.last_name || ''}
                 variant="outlined"
               />
             </Grid>
@@ -121,7 +96,7 @@ const ProfileDetails = ({ className, ...rest }) => {
                 // label="Role"
                 name="email"
                 required
-                value={user.email}
+                value={user.email || ''}
                 variant="outlined"
               />
             </Grid>

@@ -17,9 +17,7 @@ import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import MoneyIcon from '@material-ui/icons/Money';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import { useAPI } from './api';
-
-const numIncidentsUrl = 'http://localhost:8005/api/kpi/num_incident/2018/01/';
+import { round } from 'lodash';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,10 +44,9 @@ const useStyles = makeStyles((theme) => ({
 const IncidentNumber = ({ className, ...rest }) => {
   const classes = useStyles();
   // const { loading, incidents } = useAPI(numIncidentsUrl);
-  const loading = rest.loading;
+  const { loading } = rest;
   // const keys = Object.keys(incidents);
   let title = '';
-  console.log(rest.incident, loading);
   if (rest.priority === 'backlog') {
     title = `${rest.priority.toUpperCase()} INCIDENTS`;
   } else {
@@ -58,7 +55,7 @@ const IncidentNumber = ({ className, ...rest }) => {
 
   let incident = '';
   let difference = 0;
-  if (loading === false) {
+  if (loading === 'false') {
     // if (keys.includes(rest.priority)) {
     incident = rest.incident.incident;
     difference = rest.incident.difference;
@@ -74,7 +71,7 @@ const IncidentNumber = ({ className, ...rest }) => {
         <ArrowDownwardIcon className={classes.positiveDifference} />
         <Typography className={classes.positiveDifference} variant="body2">
           { /* eslint-disable-next-line react/jsx-one-expression-per-line */ }
-          {Math.abs(difference)}%
+          {round(Math.abs(difference), 2)}%
         </Typography>
         <Typography color="textSecondary" variant="caption">
           Since last month
@@ -87,7 +84,7 @@ const IncidentNumber = ({ className, ...rest }) => {
           <ArrowUpwardIcon className={classes.negativeDifference} />
           <Typography className={classes.negativeDifference} variant="body2">
             { /* eslint-disable-next-line react/jsx-one-expression-per-line */ }
-            {difference}%
+            {round(difference, 2)}%
           </Typography>
           <Typography color="textSecondary" variant="caption">
             Since last month
@@ -122,7 +119,7 @@ const IncidentNumber = ({ className, ...rest }) => {
 
 IncidentNumber.propTypes = {
   className: PropTypes.string,
-  loading: PropTypes.bool
+  loading: PropTypes.string
 };
 
 export default IncidentNumber;

@@ -15,9 +15,17 @@ import {
   Grid,
   makeStyles
 } from '@material-ui/core';
+import { dev, prod } from '../../Endpoints';
 
-const incidentsUrl = 'http://localhost:8005/api/insert/incident/';
-const criticalUrl = 'http://localhost:8005/api/insert/critical/';
+let incidentsUrl = '';
+let criticalUrl = '';
+if (process.env.NODE_ENV === 'development') {
+  incidentsUrl = `${dev.baseURL}${dev.insertIncidents}`;
+  criticalUrl = `${dev.baseURL}${dev.insertCritical}`;
+} else if (process.env.NODE_ENV === 'production') {
+  incidentsUrl = `${prod.baseURL}${prod.insertIncidents}`;
+  criticalUrl = `${prod.baseURL}${prod.insertCritical}`;
+}
 
 const useStyles = makeStyles(() => ({
   root: {}
@@ -37,7 +45,7 @@ const UploadView = ({ className, ...rest }) => {
         })}
         onSubmit={async (values) => {
           console.log(values.file);
-          let d = new FormData();
+          const d = new FormData();
           d.append('file', values.file);
           console.log(d);
           const response = await fetch(incidentsUrl, {
@@ -45,7 +53,6 @@ const UploadView = ({ className, ...rest }) => {
             mode: 'cors',
             headers: {
               Accept: 'application/json',
-            //   'Content-Type': 'multipart/form-data; boundary=--WebKitFormBoundaryfgtsKTYLsT7PNUVD',
               Authorization: `Token ${sessionStorage.getItem('Token')}`,
               'X-CSRFToken': Cookies.get('csrftoken')
             },
@@ -59,11 +66,9 @@ const UploadView = ({ className, ...rest }) => {
       >
         {({
           handleBlur,
-          handleChange,
           setFieldValue,
           handleSubmit,
           isSubmitting,
-          values
         }) => (
           <form
             onSubmit={handleSubmit}
@@ -130,14 +135,13 @@ const UploadView = ({ className, ...rest }) => {
         })}
         onSubmit={async (values) => {
           console.log(values);
-          let d = new FormData();
+          const d = new FormData();
           d.append('file', values.file);
           const response = await fetch(criticalUrl, {
             method: 'POST',
             mode: 'cors',
             headers: {
               Accept: 'application/json',
-            //   'Content-Type': 'multipart/form-data; boundary=—-WebKitFormBoundaryfgtsKTYLsT7PNUVD',
               Authorization: `Token ${sessionStorage.getItem('Token')}`,
               'X-CSRFToken': Cookies.get('csrftoken')
             },
@@ -154,7 +158,6 @@ const UploadView = ({ className, ...rest }) => {
           setFieldValue,
           handleSubmit,
           isSubmitting,
-          values
         }) => (
           <form
             onSubmit={handleSubmit}

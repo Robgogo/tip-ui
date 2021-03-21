@@ -1,26 +1,17 @@
 import React, { useEffect } from 'react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
-  Avatar,
   Box,
-  Button,
-  Divider,
   Drawer,
   Hidden,
   List,
-  Typography,
   makeStyles
 } from '@material-ui/core';
 import {
-  AlertCircle as AlertCircleIcon,
   BarChart as BarChartIcon,
-  Lock as LockIcon,
-  Settings as SettingsIcon,
-  ShoppingBag as ShoppingBagIcon,
-  User as UserIcon,
-  UserPlus as UserPlusIcon,
   Users as UsersIcon,
+  User as UserIcon,
   FilePlus as FilePlusIcon
 } from 'react-feather';
 import NavItem from './NavItem';
@@ -29,54 +20,22 @@ import { useAPI } from './UserAPI';
 
 const infoUrl = 'http://localhost:8005/api/admin/user/myinfo/';
 
-
-// const user = {
-//   avatar: '/static/images/avatars/avatar_6.png',
-//   jobTitle: 'Senior Developer',
-//   name: 'Katarina Smith'
-// };
-
 const adminItems = [
   {
     href: '/app/dashboard',
     icon: BarChartIcon,
     title: 'Dashboard'
   },
-  // {
-  //   href: '/app/customers',
-  //   icon: UsersIcon,
-  //   title: 'Customers'
-  // },
-  // {
-  //   href: '/app/products',
-  //   icon: ShoppingBagIcon,
-  //   title: 'Products'
-  // },
   {
     href: '/app/account',
     icon: UserIcon,
     title: 'Account'
   },
-  // {
-  //   href: '/app/settings',
-  //   icon: SettingsIcon,
-  //   title: 'Settings'
-  // },
-  // {
-  //   href: '/login',
-  //   icon: LockIcon,
-  //   title: 'Login'
-  // },
   {
     href: '/register',
     icon: UsersIcon,
     title: 'Add User'
   },
-  // {
-  //   href: '/404',
-  //   icon: AlertCircleIcon,
-  //   title: 'Error'
-  // },
   {
     href: '/app/upload',
     icon: FilePlusIcon,
@@ -90,46 +49,11 @@ const items = [
     icon: BarChartIcon,
     title: 'Dashboard'
   },
-  // {
-  //   href: '/app/customers',
-  //   icon: UsersIcon,
-  //   title: 'Customers'
-  // },
-  // {
-  //   href: '/app/products',
-  //   icon: ShoppingBagIcon,
-  //   title: 'Products'
-  // },
   {
     href: '/app/account',
     icon: UserIcon,
     title: 'Account'
   },
-  // {
-  //   href: '/app/settings',
-  //   icon: SettingsIcon,
-  //   title: 'Settings'
-  // },
-  // {
-  //   href: '/login',
-  //   icon: LockIcon,
-  //   title: 'Login'
-  // },
-  // {
-  //   href: '/register',
-  //   icon: UserPlusIcon,
-  //   title: 'Add User'
-  // },
-  // // {
-  // //   href: '/404',
-  // //   icon: AlertCircleIcon,
-  // //   title: 'Error'
-  // // },
-  // {
-  //   href: '/app/account',
-  //   icon: UserIcon,
-  //   title: 'Upload Report'
-  // }
 ];
 
 const useStyles = makeStyles(() => ({
@@ -145,6 +69,9 @@ const useStyles = makeStyles(() => ({
     cursor: 'pointer',
     width: 64,
     height: 64
+  },
+  nav: {
+    backgroundColor: '#ec918f'
   }
 }));
 
@@ -152,7 +79,7 @@ const NavBar = ({ onMobileClose, openMobile }) => {
   const classes = useStyles();
   const location = useLocation();
 
-  const { loading, user } = useAPI(infoUrl);
+  const { user } = useAPI(infoUrl);
 
   useEffect(() => {
     if (openMobile && onMobileClose) {
@@ -213,6 +140,7 @@ const NavBar = ({ onMobileClose, openMobile }) => {
     <>
       <Hidden lgUp>
         <Drawer
+          className={classes.nav}
           anchor="left"
           classes={{ paper: classes.mobileDrawer }}
           onClose={onMobileClose}
@@ -224,10 +152,12 @@ const NavBar = ({ onMobileClose, openMobile }) => {
       </Hidden>
       <Hidden mdDown>
         <Drawer
+          className={classes.nav}
           anchor="left"
           classes={{ paper: classes.desktopDrawer }}
           open
           variant="persistent"
+          backgroundColor="#ec918f"
         >
           {content}
         </Drawer>
