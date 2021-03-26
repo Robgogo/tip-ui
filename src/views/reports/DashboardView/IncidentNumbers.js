@@ -48,9 +48,9 @@ const IncidentNumber = ({ className, ...rest }) => {
   // const keys = Object.keys(incidents);
   let title = '';
   if (rest.priority === 'backlog') {
-    title = `${rest.priority.toUpperCase()} INCIDENTS`;
+    title = `INCIDENTS in ${rest.priority.toUpperCase()}`;
   } else {
-    title = `${rest.priority.toUpperCase()} INCIDENTS`;
+    title = `Severity ${rest.priority.toUpperCase()}`;
   }
 
   let incident = '';

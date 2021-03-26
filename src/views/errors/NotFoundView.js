@@ -56,7 +56,7 @@ const NotFoundView = () => {
             <img
               alt="Under development"
               className={classes.image}
-              src="/static/images/not_found.png"
+              src="/static/static/images/not_found.png"
             />
           </Box>
         </Container>

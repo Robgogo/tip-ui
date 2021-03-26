@@ -15,10 +15,17 @@ import {
   FilePlus as FilePlusIcon
 } from 'react-feather';
 import NavItem from './NavItem';
+import { dev, prod } from '../../../Endpoints';
 
 import { useAPI } from './UserAPI';
 
-const infoUrl = 'http://localhost:8005/api/admin/user/myinfo/';
+let infoUrl = '';
+let numIncidentsUrl = '';
+if (process.env.NODE_ENV === 'development') {
+  infoUrl = `${dev.baseURL}${dev.userInfo}`;
+} else if (process.env.NODE_ENV === 'production') {
+  infoUrl = `${prod.baseURL}${prod.userInfo}`;
+}
 
 const adminItems = [
   {

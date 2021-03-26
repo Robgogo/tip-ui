@@ -116,7 +116,7 @@ const TrafficByDevice = ({ className, ...rest }) => {
     labels: ['Inside SLA', 'Outside SLA']
   };
   let data = [];
-  const titlePie = `SLA ${rest.priority.toUpperCase()}`;
+  const titlePie = `SLA FOR ${rest.priority.toUpperCase()} SEVERITY`;
   if (rest.priority === 'critical') {
     data = dataCritical;
   } else if (rest.priority === 'high') {
@@ -186,9 +186,9 @@ const TrafficByDevice = ({ className, ...rest }) => {
                   { /* eslint-disable-next-line react/jsx-one-expression-per-line */ }
                   {value}%
                 </Typography>
-                {/* <Typography style={{ color }} variant="h2">
-                    {month}
-                  </Typography> */}
+                <Typography style={{ color }} variant="h2">
+                    {rest.month}
+                  </Typography>
               </Box>
             ))}
           </Box>

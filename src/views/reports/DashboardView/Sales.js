@@ -136,14 +136,6 @@ const Sales = ({ className, ...rest }) => {
         </CardContent>
         <Divider />
         <Box display="flex" justifyContent="flex-end" p={2}>
-          <Button
-            color="primary"
-            endIcon={<ArrowRightIcon />}
-            size="small"
-            variant="text"
-          >
-            Overview
-          </Button>
         </Box>
       </>
     );
@@ -152,12 +144,7 @@ const Sales = ({ className, ...rest }) => {
   return (
     <Card className={clsx(classes.root, className)} {...rest}>
       <CardHeader
-        action={(
-          <Button endIcon={<ArrowDropDownIcon />} size="small" variant="text">
-            Last 7 days
-          </Button>
-        )}
-        title="Latest Sales"
+        title="Availability per Service for month"
       />
       <Divider />
       {chart}
